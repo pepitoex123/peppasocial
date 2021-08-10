@@ -1,18 +1,25 @@
-import { BaseEntity } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import {Field, ObjectType, Int} from "type-graphql";
 
+
+
+// Entity for Post
+@ObjectType()
 @Entity()
-export class Book extends BaseEntity<Book, 'id'> {
-
+export class Post {
+    @Field(() => Int)
     @PrimaryKey()
     id!: number;
 
-    @Property()
+    @Field(() => String)
+    @Property({type: "date", default: "NOW()"})
+    createdAt = new Date();
+
+    @Field(() => String)
+    @Property({type: "date",onUpdate: () => new Date()})
+    updatedAt = new Date();
+
+    @Field(() => String)
+    @Property({type: "text"})
     title!: string;
-
-    @ManyToOne()
-    author!: Author;
-
 }
-
-const book = new Book();
-console.log(book.isInitialized()); // true
