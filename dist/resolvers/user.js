@@ -79,7 +79,21 @@ let UserResolver = class UserResolver {
         const hashedPasssword = await argon2_1.default.hash(options.password);
         const user = em.create(User_1.User, { username: options.username,
             password: hashedPasssword });
-        await em.persistAndFlush(user);
+        try {
+            await em.persistAndFlush(user);
+        }
+        catch (err) {
+            if (err.code === "23505" || err.details.includes("already exists")) {
+                return {
+                    errors: [
+                        {
+                            field: "username",
+                            message: "Username has already been taken"
+                        }
+                    ]
+                };
+            }
+        }
         return { user };
     }
     async login(options, { em }) {

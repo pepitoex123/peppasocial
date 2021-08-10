@@ -58,7 +58,22 @@ export class UserResolver {
         const hashedPasssword = await argon2.hash(options.password);
         const user = em.create(User,{username: options.username,
         password: hashedPasssword});
-        await em.persistAndFlush(user);
+        try{
+            await em.persistAndFlush(user);
+        }catch(err){
+            if(err.code === "23505" || err.details.includes("already exists")){
+                // this code means that there is a duplicate (ಥ﹏ಥ) , so we'll try to handle it by doing this, I did not exactly know which one to keep so just to make sure I added both lol
+                return{
+                    errors:[
+                        {
+                            field: "username",
+                            message: "Username has already been taken"
+                        }
+                    ]
+                }
+            }
+
+        }
         return {user};
     }
     @Mutation(() => UserResponse)
