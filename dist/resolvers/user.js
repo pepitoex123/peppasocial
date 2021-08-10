@@ -49,7 +49,7 @@ let UserResponse = class UserResponse {
 };
 __decorate([
     type_graphql_1.Field(() => [FieldError], { nullable: true }),
-    __metadata("design:type", FieldError)
+    __metadata("design:type", Array)
 ], UserResponse.prototype, "errors", void 0);
 __decorate([
     type_graphql_1.Field(() => User_1.User, { nullable: true }),
@@ -62,22 +62,18 @@ let UserResolver = class UserResolver {
     async register(options, { em }) {
         if (options.username.length <= 2) {
             return {
-                errors: [
-                    {
+                errors: [{
                         field: "username",
                         message: "length must be greater than two"
-                    }
-                ]
+                    }]
             };
         }
         if (options.password.length <= 2) {
             return {
-                errors: [
-                    {
+                errors: [{
                         field: "password",
                         message: "length must be greater than two"
-                    }
-                ]
+                    }]
             };
         }
         const hashedPasssword = await argon2_1.default.hash(options.password);
@@ -93,7 +89,7 @@ let UserResolver = class UserResolver {
                 errors: [{
                         field: "username",
                         message: "username does not exist"
-                    }],
+                    }]
             };
         }
         const valid = await argon2_1.default.verify(user.password, options.password);
@@ -113,7 +109,7 @@ let UserResolver = class UserResolver {
     }
 };
 __decorate([
-    type_graphql_1.Mutation(() => User_1.User),
+    type_graphql_1.Mutation(() => UserResponse),
     __param(0, type_graphql_1.Arg("options")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
